@@ -68,22 +68,24 @@ def main():
             human_label = result["human_label"]
 
             # 4. Hiển thị kết quả (Component 3: Validation & Output)
-            st.success("Đã phân tích xong!")
+            st.success("✅ Đã phân tích xong!")
 
-            # Tạo 3 cột để hiển thị metrics
-            m1, m2, m3 = st.columns(3)
+            # Tạo 2 cột để hiển thị metrics chính
+            m1, m2 = st.columns(2)
             m1.metric("Nhãn cảm xúc", human_label.split(" ")[0])
             m2.metric("Độ tin cậy", f"{score:.2%}")
-            m3.metric("Text đã chuẩn hóa", processed_text)
+
+            # Hiển thị text đã chuẩn hóa dạng info box
+            st.info(f"📝 **Text đã chuẩn hóa:** {processed_text}")
 
             # Màu sắc visual dựa trên cảm xúc
             if "POS" in raw_label:
                 st.balloons()
-                st.info(f"Kết luận: {human_label}")
+                st.success(f"🎉 **Kết luận:** {human_label}")
             elif "NEG" in raw_label:
-                st.error(f"Kết luận: {human_label}")
+                st.error(f"😔 **Kết luận:** {human_label}")
             else:
-                st.warning(f"Kết luận: {human_label}")
+                st.warning(f"😐 **Kết luận:** {human_label}")
 
             # 5. Lưu vào Database (Component 4: Storage Engine)
             save_to_db(user_input, raw_label)
