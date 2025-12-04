@@ -8,29 +8,137 @@
 - Lưu và hiển thị lịch sử phân loại (50 dòng gần nhất)
 - Giao diện web với Streamlit
 
-## Cài đặt
-1. Cài Python 3.8 trở lên
-2. Cài các thư viện cần thiết:
-   ```bash
-   pip install -r requirements.txt
-   ```
+## 📋 Yêu cầu hệ thống
+- Python 3.8 trở lên
+- Kết nối internet (để tải model lần đầu tiên)
+- Khoảng 2GB dung lượng trống (cho model và dependencies)
 
+## 🚀 Hướng dẫn cài đặt và chạy
 
-## 🚀 Hướng dẫn chạy ứng dụng
+### Bước 1: Tạo môi trường ảo (Virtual Environment)
 
-**Bước 1:** Mở terminal/cmd và chuyển đến thư mục dự án.
+**Windows:**
+```bash
+# Tạo môi trường ảo
+python -m venv venv
 
-**Bước 2:** Chạy lệnh sau để khởi động ứng dụng web:
+# Kích hoạt môi trường ảo
+.\venv\Scripts\Activate.ps1
+```
+
+**Linux/macOS:**
+```bash
+# Tạo môi trường ảo
+python3 -m venv venv
+
+# Kích hoạt môi trường ảo
+source venv/bin/activate
+```
+
+> **Lưu ý cho Windows:** Nếu gặp lỗi PowerShell execution policy, chạy lệnh sau trước:
+> ```powershell
+> Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+> ```
+
+### Bước 2: Cài đặt thư viện
+
+```bash
+pip install -r requirements.txt
+```
+
+Quá trình cài đặt có thể mất 5-10 phút tùy theo tốc độ mạng.
+
+### Bước 3: Chạy ứng dụng
 
 ```bash
 streamlit run app.py
 ```
 
-**Bước 3:**
-- Sau khi chạy lệnh, terminal sẽ hiển thị một đường link (thường là http://localhost:8501).
-- Nhấn vào link đó hoặc copy vào trình duyệt để sử dụng giao diện phân loại cảm xúc.
+Sau khi chạy lệnh, terminal sẽ hiển thị:
+```
+Local URL: http://localhost:8501
+Network URL: http://192.168.x.x:8501
+```
 
-> **Lưu ý:** Nếu chưa cài thư viện, hãy chạy `pip install -r requirements.txt` trước khi chạy ứng dụng.
+Mở trình duyệt và truy cập địa chỉ `http://localhost:8501`.
+
+### Bước 4: Sử dụng ứng dụng
+
+1. Nhập câu tiếng Việt vào ô input (ví dụ: "Hôm nay tôi rất vui")
+2. Nhấn nút **"Phân tích"**
+3. Xem kết quả:
+   - **Nhãn cảm xúc:** POSITIVE/NEGATIVE/NEUTRAL
+   - **Độ tin cậy:** Xác suất dự đoán (%)
+   - **Text đã chuẩn hóa:** Câu sau khi tiền xử lý
+4. Kiểm tra **lịch sử phân loại** ở phía dưới
+
+## ⚙️ Cấu trúc dự án
+
+```
+tranformer/
+├── app.py                      # File chính - Giao diện Streamlit
+├── utils/                      # Package chứa các module
+│   ├── __init__.py            # Package exports
+│   ├── config.py              # Cấu hình (model, dictionary, constants)
+│   ├── database.py            # Quản lý SQLite (lưu trữ & hiển thị)
+│   └── nlp_processor.py       # Tiền xử lý & phân loại cảm xúc
+├── requirements.txt            # Danh sách thư viện cần thiết
+├── README.md                  # Tài liệu này
+├── .gitignore                 # Git ignore file
+└── sentiment_history.db       # Database SQLite (tự động tạo khi chạy)
+```
+
+## 🔧 Xử lý lỗi thường gặp
+
+### Lỗi: `streamlit: command not found`
+**Nguyên nhân:** Chưa kích hoạt môi trường ảo hoặc chưa cài Streamlit.
+
+**Giải pháp:**
+```bash
+# Kích hoạt venv trước
+.\venv\Scripts\Activate.ps1   # Windows
+source venv/bin/activate       # Linux/macOS
+
+# Cài lại Streamlit
+pip install streamlit
+```
+
+### Lỗi: `No module named 'transformers'`
+**Giải pháp:**
+```bash
+pip install transformers torch
+```
+
+### Lỗi: Không tải được model từ Hugging Face
+**Nguyên nhân:** Không có kết nối internet hoặc Hugging Face bị chặn.
+
+**Giải pháp:**
+- Kiểm tra kết nối internet
+- Thử chạy lại ứng dụng (model sẽ tự động retry)
+- Nếu vẫn lỗi, có thể thay model khác trong `utils/config.py`
+
+### Lỗi: Port 8501 đã được sử dụng
+**Giải pháp:** Chạy ứng dụng trên port khác
+```bash
+streamlit run app.py --server.port 8502
+```
+
+### Lỗi: Execution Policy (Windows)
+**Giải pháp:**
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+## 🛑 Tắt ứng dụng
+
+Nhấn `Ctrl + C` trong terminal để dừng server Streamlit.
+
+## 📝 Lưu ý khi chạy lần đầu
+
+- **Model PhoBERT** sẽ được tải tự động từ Hugging Face (~500MB)
+- Quá trình tải có thể mất **2-5 phút** tùy tốc độ mạng
+- Model sẽ được **cache lại**, các lần chạy sau sẽ nhanh hơn
+- Database `sentiment_history.db` sẽ tự động tạo khi bạn phân tích câu đầu tiên
 
 ## Ghi chú
 - Mô hình sử dụng: `wonrax/phobert-base-vietnamese-sentiment` (có thể đổi sang model khác nếu muốn)
