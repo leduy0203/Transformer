@@ -15,32 +15,9 @@
 
 ## 🚀 Hướng dẫn cài đặt và chạy
 
-### Bước 1: Tạo môi trường ảo (Virtual Environment)
+### Bước 1: Cài đặt thư viện
 
-**Windows:**
-```bash
-# Tạo môi trường ảo
-python -m venv venv
-
-# Kích hoạt môi trường ảo
-.\venv\Scripts\Activate.ps1
-```
-
-**Linux/macOS:**
-```bash
-# Tạo môi trường ảo
-python3 -m venv venv
-
-# Kích hoạt môi trường ảo
-source venv/bin/activate
-```
-
-> **Lưu ý cho Windows:** Nếu gặp lỗi PowerShell execution policy, chạy lệnh sau trước:
-> ```powershell
-> Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-> ```
-
-### Bước 2: Cài đặt thư viện
+Mở terminal/cmd tại thư mục dự án và chạy:
 
 ```bash
 pip install -r requirements.txt
@@ -48,10 +25,16 @@ pip install -r requirements.txt
 
 Quá trình cài đặt có thể mất 5-10 phút tùy theo tốc độ mạng.
 
-### Bước 3: Chạy ứng dụng
+### Bước 2: Chạy ứng dụng
 
 ```bash
 streamlit run app.py
+```
+
+Hoặc nếu lệnh trên không hoạt động:
+
+```bash
+python -m streamlit run app.py
 ```
 
 Sau khi chạy lệnh, terminal sẽ hiển thị:
@@ -91,16 +74,15 @@ tranformer/
 ## 🔧 Xử lý lỗi thường gặp
 
 ### Lỗi: `streamlit: command not found`
-**Nguyên nhân:** Chưa kích hoạt môi trường ảo hoặc chưa cài Streamlit.
+**Nguyên nhân:** Chưa cài Streamlit hoặc chưa thêm vào PATH.
 
 **Giải pháp:**
 ```bash
-# Kích hoạt venv trước
-.\venv\Scripts\Activate.ps1   # Windows
-source venv/bin/activate       # Linux/macOS
-
-# Cài lại Streamlit
+# Cài Streamlit
 pip install streamlit
+
+# Hoặc chạy bằng Python module
+python -m streamlit run app.py
 ```
 
 ### Lỗi: `No module named 'transformers'`
