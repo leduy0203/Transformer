@@ -8,7 +8,7 @@ DB_NAME = "sentiment_history.db"
 # Model Transformer
 MODEL_NAME = "wonrax/phobert-base-vietnamese-sentiment"
 
-# Dictionary chuẩn hóa từ viết tắt tiếng Việt
+# Dictionary chuẩn hóa từ viết tắt & thiếu dấu tiếng Việt
 NORMALIZATION_DICT = {
     "rat": "rất",
     "ko": "không",
@@ -28,6 +28,25 @@ NORMALIZATION_DICT = {
     "tks": "cảm ơn",
     "thank": "cảm ơn",
     "thanks": "cảm ơn",
+    "hom": "hôm",
+    "nay": "nay",
+    "ngay": "ngày",
+    "toi": "tôi",
+    "ban": "bạn",
+    "khong": "không",
+    "duoc": "được",
+    "tot": "tốt",
+    "xau": "xấu",
+    "dep": "đẹp",
+    "qua": "quá",
+    "dang": "đang",
+    "den": "đến",
+    "roi": "rồi",
+    "nua": "nữa",
+    "cho": "cho",
+    "lam": "làm",
+    "ma": "mà",
+    "thi": "thì",
 }
 
 # Validation
