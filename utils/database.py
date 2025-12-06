@@ -38,9 +38,6 @@ def save_to_db(text, sentiment):
     """
     Lưu kết quả phân loại vào database.
 
-    Chống SQL Injection bằng cách sử dụng parameterized queries (?).
-    Đây là best practice bắt buộc khi làm việc với database.
-
     Args:
         text (str): Câu nhập vào
         sentiment (str): Nhãn cảm xúc (POS/NEG/NEU)
@@ -49,7 +46,6 @@ def save_to_db(text, sentiment):
     c = conn.cursor()
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    # Sử dụng ? để tránh SQL Injection
     c.execute(
         "INSERT INTO sentiments (text, sentiment, timestamp) VALUES (?, ?, ?)",
         (text, sentiment, timestamp),
@@ -62,13 +58,11 @@ def load_history(limit=50):
     """
     Lấy lịch sử phân loại từ database.
 
-    Giới hạn số dòng để tránh làm chậm giao diện khi dữ liệu lớn.
-
     Args:
-        limit (int): Số dòng tối đa trả về (mặc định 50)
+        limit (int): Số dòng tối đa trả về
 
     Returns:
-        pd.DataFrame: DataFrame chứa lịch sử (text, sentiment, timestamp)
+        pd.DataFrame: DataFrame chứa lịch sử
     """
     conn = sqlite3.connect(DB_NAME)
     df = pd.read_sql_query(

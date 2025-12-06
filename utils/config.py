@@ -2,13 +2,11 @@
 Cấu hình chung cho ứng dụng
 """
 
-# Database
 DB_NAME = "sentiment_history.db"
 
-# Model Transformer
 MODEL_NAME = "wonrax/phobert-base-vietnamese-sentiment"
 
-# Dictionary chuẩn hóa từ viết tắt & thiếu dấu tiếng Việt
+# Từ điển chuẩn hóa tiếng Việt
 NORMALIZATION_DICT = {
     "rat": "rất",
     "ko": "không",

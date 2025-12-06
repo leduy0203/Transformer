@@ -14,30 +14,23 @@ from utils import (
 )
 from utils.config import MIN_TEXT_LENGTH
 
-# --- CẤU HÌNH TRANG ---
-st.set_page_config(
-    page_title="Trợ lý Phân loại Cảm xúc", page_icon="🤖", layout="centered"
-)
-
-
-# --- GIAO DIỆN NGƯỜI DÙNG (Streamlit) ---
+st.set_page_config(page_title="Trợ lý Phân loại Cảm xúc", layout="centered")
 
 
 def main():
-    init_db()  # Khởi tạo DB khi chạy app
+    init_db()
 
     st.title("Trợ lý Phân loại Cảm xúc Tiếng Việt")
     st.markdown("---")
 
-    # Load model với spinner (Yêu cầu hình 4: hiển thị trạng thái khi load)
-    with st.spinner("Đang tải mô hình AI... Vui lòng chờ giây lát..."):
+    # Load model PhoBERT 
+    with st.spinner("Đang tải mô hình AI..."):
         try:
             classifier = load_model()
         except Exception as e:
             st.error(f"Lỗi tải mô hình: {e}")
             return
 
-    # Khu vực nhập liệu
     col1, col2 = st.columns([3, 1])
     with col1:
         user_input = st.text_input(
@@ -45,60 +38,55 @@ def main():
         )
 
     with col2:
-        st.write("")  # Spacer
+        st.write("")
         st.write("")
         analyze_btn = st.button("Phân tích", type="primary")
 
-    # Xử lý khi bấm nút
     if analyze_btn:
-        # 1. Validation: Kiểm tra độ dài
+        # Validation: Kiểm tra độ dài input
         if not user_input or len(user_input.strip()) < MIN_TEXT_LENGTH:
             st.warning(
                 f"Câu quá ngắn hoặc rỗng! Vui lòng nhập ít nhất {MIN_TEXT_LENGTH} ký tự."
             )
         else:
-            # 2. Tiền xử lý (Component 1: Preprocessing)
+            # Bước 1: Tiền xử lý (chuẩn hóa từ viết tắt, thiếu dấu)
             processed_text = preprocess_text(user_input)
 
-            # 3. Phân loại cảm xúc (Component 2: Sentiment Analysis)
+            # Bước 2: Gọi model Transformer để phân loại cảm xúc
             result = analyze_sentiment(processed_text, classifier)
 
             raw_label = result["label"]
             score = result["score"]
             human_label = result["human_label"]
 
-            # 4. Hiển thị kết quả (Component 3: Validation & Output)
-            st.success("✅ Đã phân tích xong!")
+            st.success("Đã phân tích xong!")
 
-            # Tạo 2 cột để hiển thị metrics chính
+            # Hiển thị kết quả phân loại
             m1, m2 = st.columns(2)
             m1.metric("Nhãn cảm xúc", human_label.split(" ")[0])
             m2.metric("Độ tin cậy", f"{score:.2%}")
 
-            # Hiển thị text đã chuẩn hóa dạng info box
-            st.info(f"📝 **Text đã chuẩn hóa:** {processed_text}")
+            st.info(f"**Text đã chuẩn hóa:** {processed_text}")
 
-            # Màu sắc visual dựa trên cảm xúc
             if "POS" in raw_label:
                 st.balloons()
-                st.success(f"🎉 **Kết luận:** {human_label}")
+                st.success(f"**Kết luận:** {human_label}")
             elif "NEG" in raw_label:
-                st.error(f"😔 **Kết luận:** {human_label}")
+                st.error(f"**Kết luận:** {human_label}")
             else:
-                st.warning(f"😐 **Kết luận:** {human_label}")
+                st.warning(f"**Kết luận:** {human_label}")
 
-            # 5. Lưu vào Database (Component 4: Storage Engine)
+            # Lưu kết quả vào database 
             save_to_db(user_input, raw_label)
 
     st.markdown("---")
 
-    # --- 4. LỊCH SỬ PHÂN LOẠI (Yêu cầu hình 4) ---
+    # Hiển thị lịch sử phân loại từ database
     st.subheader("Lịch sử phân loại (50 tin mới nhất)")
 
     try:
         history_df = load_history()
         if not history_df.empty:
-            # Format lại bảng cho đẹp
             st.dataframe(
                 history_df,
                 column_config={
@@ -112,7 +100,6 @@ def main():
     except Exception as e:
         st.error("Không thể tải lịch sử.")
 
-    # --- Footer ---
     st.markdown("---")
     st.caption("Đồ án môn học: Xây dựng trợ lý phân loại cảm xúc sử dụng Transformer.")
 
